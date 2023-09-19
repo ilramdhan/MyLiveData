@@ -1,12 +1,10 @@
 package com.dicoding.mylivedata
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.mylivedata.databinding.ActivityMainBinding
-import com.dicoding.mylivedata.ui.theme.MyLiveDataTheme
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,5 +17,14 @@ class MainActivity : AppCompatActivity() {
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
         liveDataTimerViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        subscribe()
+    }
+
+    private fun subscribe() {
+        val elapsedTimeObserver = Observer<Long?> { aLong ->
+            val newText = this@MainActivity.resources.getString(R.string.seconds, aLong)
+            activityMainBinding.timerTextview.text = newText
+        }
+        liveDataTimerViewModel.getElapsedTime().observe(this, elapsedTimeObserver)
     }
 }
